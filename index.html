@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <title>Multi Select</title>
+    <style>
+        select.select-dropdowns {
+            width: 150px;
+            height: 200px;
+            vertical-align: middle;
+        }
+        
+        .left-right-buttons-container {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            margin: 0 10px;
+        }
+        
+        .left-right-buttons {
+            width: 50px;
+            padding: 5px 0;
+            margin: 10px 0;
+            background: #6d6c6c;
+            border-radius: 5px;
+            color: white;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="multi-select-container" ng-app="MultiSelectExample" ng-controller="multiSelect">
+        <select class="select-dropdowns" ng-model="selectedOptionsLeft" ng-options="option.value for option in leftOptions | orderBy :'id'" multiple></select>
+        <div class="left-right-buttons-container">
+            <div class="left-right-buttons" ng-click="addAllLeft()">&lt;&lt;</div>
+            <div class="left-right-buttons" ng-click="addToLeft()">&lt;</div>
+            <div class="left-right-buttons" ng-click="addToRight()">&gt;</div>
+            <div class="left-right-buttons" ng-click="addAllRight()">&gt;&gt;</div>
+        </div>
+        <select class="select-dropdowns" ng-model="selectedOptionsRight" ng-options="option.value for option in rightOptions | orderBy :'id'" multiple></select>
+        {{selectedOptions}}
+    </div>
+
+    <!--**********************   libraries   ************************-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0-rc.0/angular.min.js"></script>
+
+    <script>
+        var multiSelectApp = angular.module('MultiSelectExample', []);
+        multiSelectApp.controller('multiSelect', ['$scope', function($scope) {
+            //            $scope.leftOptions = ["TEst1", "TEst2", "TEst3", "TEst4", "TEst5", "TEst6"];
+            $scope.leftOptions = [{
+                id: 1,
+                value: "TEst1"
+            }, {
+                id: 2,
+                value: "TEst2"
+            }, {
+                id: 3,
+                value: "TEst3"
+            }, {
+                id: 4,
+                value: "TEst4"
+            }];
+            $scope.addAllRight = function() {
+                if ($scope.rightOptions == undefined || $scope.rightOptions == null) {
+                    $scope.rightOptions = [];
+                }
+                for (i = 0; i < $scope.leftOptions.length; i++) {
+                    $scope.rightOptions.push($scope.leftOptions[i]);
+                }
+                $scope.leftOptions = [];
+            };
+            $scope.addToRight = function() {
+                //                console.log($scope.rightOptions);
+                if ($scope.rightOptions == undefined || $scope.rightOptions == null) {
+                    $scope.rightOptions = [];
+                }
+                if($scope.selectedOptionsLeft == undefined)
+                    return;
+                for (i = 0; i < $scope.selectedOptionsLeft.length; i++) {
+                    //                    console.log($scope.selectedOptionsLeft[i]);
+                    $scope.rightOptions.push($scope.selectedOptionsLeft[i]);
+                    for (j = 0; j < $scope.leftOptions.length; j++) {
+                        //                        console.log($scope.leftOptions[j]);
+                        if ($scope.leftOptions[j].id == $scope.selectedOptionsLeft[i].id)
+                            $scope.leftOptions.splice(j, 1);
+                    }
+                }
+            };
+            $scope.addToLeft = function() {
+                //                console.log($scope.rightOptions);
+                if ($scope.leftOptions == undefined || $scope.leftOptions == null) {
+                    $scope.leftOptions = [];
+                }
+                if($scope.selectedOptionsRight == undefined)
+                    return;
+                for (i = 0; i < $scope.selectedOptionsRight.length; i++) {
+                    //                    console.log($scope.selectedOptionsLeft[i]);
+                    $scope.leftOptions.push($scope.selectedOptionsRight[i]);
+                    for (j = 0; j < $scope.rightOptions.length; j++) {
+                        //                        console.log($scope.leftOptions[j]);
+                        if ($scope.rightOptions[j].id == $scope.selectedOptionsRight[i].id)
+                            $scope.rightOptions.splice(j, 1);
+                    }
+                }
+            };
+            $scope.addAllLeft = function() {
+                if ($scope.leftOptions == undefined || $scope.leftOptions == null) {
+                    $scope.leftOptions = [];
+                }
+                for (i = 0; i < $scope.rightOptions.length; i++) {
+                    $scope.leftOptions.push($scope.rightOptions[i]);
+                }
+                $scope.rightOptions = [];
+            };
+        }]);
+
+    </script>
+
+</body>
+
+</html>
